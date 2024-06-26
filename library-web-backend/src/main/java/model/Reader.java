@@ -1,7 +1,6 @@
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -9,76 +8,60 @@ import javax.persistence.*;
 @Table(name = "readers")
 public class Reader {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(name = "full_name")
-    private String fullName;
+	@Column(name = "full_name")
+	private String fullName;
 
-    private String gender;
+	@Column(name = "gender")
+	private String gender;
 
-    private int age;
+	@Column(name = "age")
+	private int age;
 
-    @OneToMany(mappedBy = "reader", cascade = CascadeType.ALL)
-    private Set<Loan> loans = new HashSet<>();
+	@OneToMany(mappedBy = "reader")
+    private List<Loan> loans;
 
-    public Reader() {
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Reader(String fullName, String gender, int age) {
-        this.fullName = fullName;
-        this.gender = gender;
-        this.age = age;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getFullName() {
+		return fullName;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
 
-    public String getFullName() {
-        return fullName;
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
-    public String getGender() {
-        return gender;
-    }
+	public int getAge() {
+		return age;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    public int getAge() {
-        return age;
-    }
+	public List<Loan> getLoans() {
+		return loans;
+	}
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public Set<Loan> getLoans() {
-        return loans;
-    }
-
-    public void setLoans(Set<Loan> loans) {
-        this.loans = loans;
-    }
-
-    public void addLoan(Loan loan) {
-        loans.add(loan);
-    }
-
-    public void removeLoan(Loan loan) {
-        loans.remove(loan);
-    }
-
+	public void setLoans(List<Loan> loans) {
+		this.loans = loans;
+	}
 
 }

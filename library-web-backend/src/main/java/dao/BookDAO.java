@@ -1,48 +1,74 @@
 package dao;
 
-import model.Book;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.TypedQuery;
+import javax.persistence.Persistence;
+
+import model.Book;
 
 import java.util.List;
 
 public class BookDAO {
+    private EntityManager entityManager;
 
-	private EntityManager entityManager;
+    public BookDAO() {
+        entityManager = Persistence.createEntityManagerFactory("library-web-backend").createEntityManager();
+    }
 
-	public BookDAO(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
+    // Найти книгу по ID
+    public Book findById(Long id) {
+        return entityManager.find(Book.class, id);
+    }
 
-	public void save(Book book) {
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.persist(book);
-		transaction.commit();
-	}
+    // Найти все книги
+    public List<Book> findAll() {
+        return entityManager.createQuery("SELECT b FROM Book b", Book.class).getResultList();
+    }
 
-	public void update(Book book) {
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.merge(book);
-		transaction.commit();
-	}
+    // Сохранить книгу
+    public void save(Book book) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            entityManager.persist(book);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
 
-	public void delete(Book book) {
-		EntityTransaction transaction = entityManager.getTransaction();
-		transaction.begin();
-		entityManager.remove(book);
-		transaction.commit();
-	}
+    // Обновить книгу
+    public void update(Book book) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            entityManager.merge(book);
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
 
-	public Book findById(Long id) {
-		return entityManager.find(Book.class, id);
-	}
+    // Удалить книгу
+    public void delete(Long id) {
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+            Book book = entityManager.find(Book.class, id);
+            if (book != null) {
+                entityManager.remove(book);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
 
-	public List<Book> findAll() {
-		TypedQuery<Book> query = entityManager.createQuery("SELECT b FROM Book b", Book.class);
-		return query.getResultList();
-	}
+    // Закрыть EntityManager
+    public void close() {
+        entityManager.close();
+    }
 }

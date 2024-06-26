@@ -1,8 +1,6 @@
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -13,28 +11,18 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "title") // TODO: добавить nullable
 	private String title;
-
-	@ElementCollection
-	@CollectionTable(name = "authors", joinColumns = @JoinColumn(name = "book_id"))
+	
 	@Column(name = "author")
-	private Set<String> authors = new HashSet<>();
+    private String author;
 
 	@Column(name = "publish_year")
 	private int publishYear;
 
-	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
-	private Set<Loan> loans = new HashSet<>();
-
-	public Book() {
-	}
-
-	public Book(String title, Set<String> authors, int publishYear) {
-		this.title = title;
-		this.authors = authors;
-		this.publishYear = publishYear;
-	}
-
+	@OneToMany(mappedBy = "book")
+    private List<Loan> loans;
+	
 	public Long getId() {
 		return id;
 	}
@@ -51,14 +39,14 @@ public class Book {
 		this.title = title;
 	}
 
-	public Set<String> getAuthors() {
-		return authors;
+	public String getAuthor() {
+		return author;
 	}
 
-	public void setAuthors(Set<String> authors) {
-		this.authors = authors;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
-
+	
 	public int getPublishYear() {
 		return publishYear;
 	}
@@ -67,19 +55,14 @@ public class Book {
 		this.publishYear = publishYear;
 	}
 
-	public Set<Loan> getLoans() {
+	public List<Loan> getLoans() {
 		return loans;
 	}
 
-	public void setLoans(Set<Loan> loans) {
+	public void setLoans(List<Loan> loans) {
 		this.loans = loans;
 	}
 
-	public void addLoan(Loan loan) {
-		loans.add(loan);
-	}
 
-	public void removeLoan(Loan loan) {
-		loans.remove(loan);
-	}
+	
 }

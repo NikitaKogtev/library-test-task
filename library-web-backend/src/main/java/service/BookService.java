@@ -3,40 +3,45 @@ package service;
 import dao.BookDAO;
 import model.Book;
 
-import javax.persistence.EntityManager;
-
 import java.util.List;
 
+import com.google.inject.Inject;
+
 public class BookService {
+    private BookDAO bookDAO;
 
-	private EntityManager entityManager;
+    @Inject
+    public BookService(BookDAO bookDAO) {
+    	this.bookDAO = bookDAO;
+    }
+    
+    // Найти книгу по ID
+    public Book getBookById(Long id) {
+        return bookDAO.findById(id);
+    }
 
-	public BookService(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
+    // Найти все книги
+    public List<Book> getAllBooks() {
+        return bookDAO.findAll();
+    }
 
-	public void addBook(Book book) {
-		BookDAO bookDAO = new BookDAO(entityManager);
-		bookDAO.save(book);
-	}
+    // Добавить книгу
+    public void addBook(Book book) {
+        bookDAO.save(book);
+    }
 
-	public void updateBook(Book book) {
-		BookDAO bookDAO = new BookDAO(entityManager);
-		bookDAO.update(book);
-	}
+    // Обновить книгу
+    public void updateBook(Book book) {
+        bookDAO.update(book);
+    }
 
-	public void deleteBook(Book book) {
-		BookDAO bookDAO = new BookDAO(entityManager);
-		bookDAO.delete(book);
-	}
+    // Удалить книгу
+    public void deleteBook(Long id) {
+        bookDAO.delete(id);
+    }
 
-	public Book getBookById(Long id) {
-		BookDAO bookDAO = new BookDAO(entityManager);
-		return bookDAO.findById(id);
-	}
-
-	public List<Book> getAllBooks() {
-		BookDAO bookDAO = new BookDAO(entityManager);
-		return bookDAO.findAll();
-	}
+    // Закрыть ресурсы
+    public void close() {
+        bookDAO.close();
+    }
 }

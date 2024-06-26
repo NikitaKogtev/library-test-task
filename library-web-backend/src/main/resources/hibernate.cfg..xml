@@ -11,7 +11,8 @@
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
-        <mapping class="com.library.model.Book"/>
-        <mapping class="com.library.model.Reader"/>
+        <mapping class="model.Book"/>
+        <mapping class="model.Reader"/>
+       	<mapping class="model.Loan"/>
     </session-factory>
 </hibernate-configuration>

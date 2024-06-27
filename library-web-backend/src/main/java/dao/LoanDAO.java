@@ -2,7 +2,8 @@ package dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+
+import com.google.inject.Inject;
 
 import model.Loan;
 
@@ -11,8 +12,9 @@ import java.util.List;
 public class LoanDAO {
     private EntityManager entityManager;
 
-    public LoanDAO() {
-        entityManager = Persistence.createEntityManagerFactory("library-web-backend").createEntityManager();
+    @Inject
+    public LoanDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     // Найти запись о займе по ID

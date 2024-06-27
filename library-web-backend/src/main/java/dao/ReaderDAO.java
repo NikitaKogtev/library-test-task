@@ -2,7 +2,8 @@ package dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+
+import com.google.inject.Inject;
 
 import model.Reader;
 
@@ -11,8 +12,9 @@ import java.util.List;
 public class ReaderDAO {
     private EntityManager entityManager;
 
-    public ReaderDAO() {
-        entityManager = Persistence.createEntityManagerFactory("library-web-backend").createEntityManager();
+    @Inject
+    public ReaderDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     // Найти читателя по ID

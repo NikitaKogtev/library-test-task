@@ -1,10 +1,9 @@
 package resource;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.google.inject.Inject;
+
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 
 import model.Loan;
 import service.LoanService;

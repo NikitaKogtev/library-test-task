@@ -2,7 +2,8 @@ package dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+
+import com.google.inject.Inject;
 
 import model.Book;
 
@@ -11,8 +12,9 @@ import java.util.List;
 public class BookDAO {
     private EntityManager entityManager;
 
-    public BookDAO() {
-        entityManager = Persistence.createEntityManagerFactory("library-web-backend").createEntityManager();
+    @Inject 
+    public BookDAO(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     // Найти книгу по ID

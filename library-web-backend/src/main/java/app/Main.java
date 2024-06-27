@@ -1,40 +1,42 @@
 package app;
 
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.grizzly.http.server.NetworkListener;
-import org.glassfish.grizzly.http.server.ServerConfiguration;
-import org.glassfish.grizzly.servlet.ServletHandler;
+import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceFilter;
-import com.google.inject.servlet.GuiceServletContextListener;
 
-import javax.servlet.DispatcherType;
-import java.util.EnumSet;
+import java.net.URI;
+
+import resource.BookResource;
+import resource.LoanResource;
+import resource.ReaderResource;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-        final ResourceConfig resourceConfig = new ResourceConfig()
-                .packages("com.example.resources")
-                .register(new ApplicationBinder());
+    public static void main(String[] args) {
+        // Создание инжектора Guice и загрузка модуля
+        Injector injector = Guice.createInjector(new LibraryModule());
 
-        HttpServer server = HttpServer.createSimpleServer();
-        ServerConfiguration config = server.getServerConfiguration();
-        
-        // Setup ServletHandler with Jersey and Guice integration
-        ServletHandler servletHandler = new ServletHandler();
-        servletHandler.addServlet("jerseyServlet", new ServletContainer(resourceConfig))
-                .addMapping("/*");
+        // Получение ресурсов через Guice
+        BookResource bookResource = injector.getInstance(BookResource.class);
+        ReaderResource readerResource = injector.getInstance(ReaderResource.class);
+        LoanResource loanResource = injector.getInstance(LoanResource.class);
 
-        config.addHttpHandler(servletHandler);
+        // Создание конфигурации Jersey и регистрация ресурсов
+        ResourceConfig config = new ResourceConfig();
+        config.register(bookResource);
+        config.register(readerResource);
+        config.register(loanResource);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(server::shutdownNow));
-
-        server.start();
-        System.out.println("Application started at http://localhost:8080");
-        Thread.currentThread().join();
+        // Запуск сервера Jetty
+        URI baseUri = URI.create("http://localhost:8080/");
+        try {
+            JettyHttpContainerFactory.createServer(baseUri, config).start();
+            System.out.println("Server started on: " + baseUri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
+
 

@@ -15,10 +15,12 @@ public class BookController {
 
 	@Inject
 	public BookController(BookServiceImpl bookService) {
+		System.out.println("HI! INJECT BOOK");
 		this.bookServiceImpl = bookService;
 	}
 
 	@GET
+	@Path("/list")
 	@Produces(MediaType.APPLICATION_JSON)
     public String getAllBooks() {
 		System.out.println("HI!");

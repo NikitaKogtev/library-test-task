@@ -2,16 +2,17 @@ package service;
 
 import dao.LoanDAO;
 import model.Loan;
+import service.impl.LoanService;
 
 import java.util.List;
 
 import com.google.inject.Inject;
 
-public class LoanService {
+public class LoanServiceImpl implements LoanService {
     private LoanDAO loanDAO;
 
     @Inject
-    public LoanService(LoanDAO loanDAO) {
+    public LoanServiceImpl(LoanDAO loanDAO) {
     	this.loanDAO = loanDAO;
     }
     

@@ -2,16 +2,15 @@ package service;
 
 import dao.BookDAO;
 import model.Book;
-
-import java.util.List;
+import service.impl.BookService;
 
 import com.google.inject.Inject;
 
-public class BookService {
+public class BookServiceImpl implements BookService{
     private BookDAO bookDAO;
 
     @Inject
-    public BookService(BookDAO bookDAO) {
+    public BookServiceImpl(BookDAO bookDAO) {
     	this.bookDAO = bookDAO;
     }
     
@@ -21,7 +20,7 @@ public class BookService {
     }
 
     // Найти все книги
-    public List<Book> getAllBooks() {
+    public String getAllBooks() {
         return bookDAO.findAll();
     }
 
@@ -31,8 +30,10 @@ public class BookService {
     }
 
     // Обновить книгу
-    public void updateBook(Book book) {
-        bookDAO.update(book);
+    public void updateBook(Long id, Book book) {
+    	Book existingBook = bookDAO.findById(id);
+		book.setId(id);
+        bookDAO.update(existingBook);
     }
 
     // Удалить книгу
@@ -44,4 +45,10 @@ public class BookService {
     public void close() {
         bookDAO.close();
     }
+
+	@Override
+	public void updateBook(Book book) {
+		// TODO Auto-generated method stub
+		
+	}
 }

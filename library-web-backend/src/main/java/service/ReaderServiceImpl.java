@@ -2,16 +2,17 @@ package service;
 
 import dao.ReaderDAO;
 import model.Reader;
+import service.impl.ReaderService;
 
 import java.util.List;
 
 import com.google.inject.Inject;
 
-public class ReaderService {
+public class ReaderServiceImpl implements ReaderService {
     private ReaderDAO readerDAO;
 
     @Inject
-    public ReaderService(ReaderDAO readerDAO) {
+    public ReaderServiceImpl(ReaderDAO readerDAO) {
     	this.readerDAO = readerDAO;
     }
     

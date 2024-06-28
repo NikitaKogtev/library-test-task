@@ -12,17 +12,17 @@ public class Reader {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "full_name")
+	@Column(name = "full_name", nullable = false)
 	private String fullName;
 
-	@Column(name = "gender")
+	@Column(name = "gender", nullable = false)
 	private String gender;
 
-	@Column(name = "age")
+	@Column(name = "age", nullable = false)
 	private int age;
 
 	@OneToMany(mappedBy = "reader")
-    private List<Loan> loans;
+	private List<Loan> loans;
 
 	public Long getId() {
 		return id;

@@ -3,12 +3,10 @@ package service;
 import dao.LoanDAO;
 import model.Loan;
 import service.impl.LoanService;
-
-import java.util.List;
-
 import com.google.inject.Inject;
 
 public class LoanServiceImpl implements LoanService {
+	
     private LoanDAO loanDAO;
 
     @Inject
@@ -16,34 +14,35 @@ public class LoanServiceImpl implements LoanService {
     	this.loanDAO = loanDAO;
     }
     
-    // Найти запись о займе по ID
-    public Loan getLoanById(Long id) {
+    @Override
+    public String getLoanById(Long id) {
         return loanDAO.findById(id);
     }
 
-    // Найти все записи о займах
-    public List<Loan> getAllLoans() {
+    @Override
+    public String getAllLoans() {
         return loanDAO.findAll();
     }
 
-    // Добавить запись о займе
-    public void addLoan(Loan loan) {
-        loanDAO.save(loan);
+    @Override
+    public String addLoan(Loan loan) {
+        return loanDAO.save(loan);
     }
 
-    // Обновить запись о займе
-    public void updateLoan(Loan loan) {
-        loanDAO.update(loan);
+    @Override
+    public String updateLoan(Long id, Loan loan) {
+        String existingLoan = loanDAO.findById(id);
+        if (existingLoan != null) {
+            loan.setId(id);
+            return loanDAO.update(loan);
+        } else {
+            return "{\"status\":\"error\",\"message\":\"Loan not found\"}";
+        }
     }
 
-    // Удалить запись о займе
-    public void deleteLoan(Long id) {
-        loanDAO.delete(id);
-    }
-
-    // Закрыть ресурсы
-    public void close() {
-        loanDAO.close();
+    @Override
+    public String deleteLoan(Long id) {
+        return loanDAO.delete(id);
     }
 }
 

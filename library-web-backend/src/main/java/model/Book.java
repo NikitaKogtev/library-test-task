@@ -11,18 +11,18 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "title") // TODO: добавить nullable
+	@Column(name = "title", nullable = false)
 	private String title;
-	
-	@Column(name = "author")
-    private String author;
 
-	@Column(name = "publish_year")
+	@Column(name = "author", nullable = false)
+	private String author;
+
+	@Column(name = "publish_year", nullable = false)
 	private int publishYear;
 
 	@OneToMany(mappedBy = "book")
-    private List<Loan> loans;
-	
+	private List<Loan> loans;
+
 	public Long getId() {
 		return id;
 	}
@@ -46,7 +46,7 @@ public class Book {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	
+
 	public int getPublishYear() {
 		return publishYear;
 	}
@@ -63,6 +63,4 @@ public class Book {
 		this.loans = loans;
 	}
 
-
-	
 }

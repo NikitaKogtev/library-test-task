@@ -9,6 +9,6 @@
 <body>
 	Hello <br/>
 
-	<a href="rest/books/list" target="_blank">Books List</a><br/>
+	<a href="rest/books" target="_blank">Books List</a><br/>
 </body>
 </html>

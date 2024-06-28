@@ -12,14 +12,14 @@ public class Loan {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "loan_date")
+	@Column(name = "loan_date", nullable = false)
 	private LocalDate loanDate;
 
-	@Column(name = "return_date")
+	@Column(name = "return_date", nullable = false)
 	private LocalDate returnDate;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "reader_id")
+	@JoinColumn(name = "reader_id", nullable = false)
 	private Reader reader;
 
 	@ManyToOne
@@ -49,7 +49,7 @@ public class Loan {
 	public void setReturnDate(LocalDate returnDate) {
 		this.returnDate = returnDate;
 	}
-	
+
 	public Reader getReader() {
 		return reader;
 	}

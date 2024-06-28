@@ -1,6 +1,10 @@
 package app;
 
 import javax.servlet.annotation.WebListener;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.sun.jersey.guice.JerseyServletModule;
 
 import com.google.inject.persist.PersistService;
@@ -18,29 +22,34 @@ import com.sun.jersey.guice.spi.container.servlet.*;
 
 @WebListener
 public class GuiceListener extends GuiceServletContextListener {
-    @Override
-    protected Injector getInjector() {
-    	System.out.println("Hello!");
-        Injector injector = Guice.createInjector(new JerseyServletModule() {
-            @Override
-            protected void configureServlets() {
-                
-                bind(BookController.class);
-                bind(LoanController.class);
-                bind(ReaderController.class);
-                serve("/rest/*").with(GuiceContainer.class);
-            }
-        }, new JpaPersistModule("db_manager"));
+	private static final Logger logger = LogManager.getLogger(GuiceListener.class);
 
-        injector.getInstance(JpaInitializer.class);
-        return injector;
-    }
+	@Override
+	protected Injector getInjector() {
+		logger.info("Run Injector");
+		Injector injector = Guice.createInjector(new JerseyServletModule() {
+			@Override
+			protected void configureServlets() {
+
+				bind(BookController.class);
+				bind(LoanController.class);
+				bind(ReaderController.class);
+				serve("/rest/*").with(GuiceContainer.class);
+			}
+		}, new JpaPersistModule("db_manager"));
+
+		injector.getInstance(JpaInitializer.class);
+		System.out.println("End!");
+		return injector;
+	}
 }
 
-
 class JpaInitializer {
+	private static final Logger logger = LogManager.getLogger(JpaInitializer.class);
+
 	@Inject
-	public JpaInitializer (PersistService persistService) {
+	public JpaInitializer(PersistService persistService) {
+		logger.info("Run Persost Service");
 		persistService.start();
 	}
 }

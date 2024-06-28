@@ -1,53 +1,64 @@
 package controller;
 
-
 import com.google.inject.Inject;
 
 import model.Reader;
 import service.ReaderServiceImpl;
-
-import java.util.List;
-
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Path("/readers")
 public class ReaderController {
-	private final ReaderServiceImpl readerService;
+	private static final Logger logger = LogManager.getLogger(ReaderController.class);
 
-    @Inject
-    public ReaderController(ReaderServiceImpl readerService) {
-        this.readerService = readerService;
-    }
+	private final ReaderServiceImpl readerServiceImpl;
 
-    @GET
-    public List<Reader> getAllReaders() {
-        return readerService.getAllReaders();
-    }
+	@Inject
+	public ReaderController(ReaderServiceImpl readerServiceImpl) {
+		logger.info("ReaderController inject");
+		this.readerServiceImpl = readerServiceImpl;
+	}
 
-    @GET
-    @Path("/{id}")
-    public Reader getReaderById(@PathParam("id") Long id) {
-        return readerService.getReaderById(id);
-      
-    }
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAllReaders() {
+		logger.info("Get all readers");
+		return readerServiceImpl.getAllReaders();
+	}
 
-    @POST
-    public void addReader(Reader reader) {
-        readerService.addReader(reader);
-    }
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getReaderById(@PathParam("id") Long id) {
+		logger.info("Get reader for id");
+		return readerServiceImpl.getReaderById(id);
+	}
 
-    @PUT
-    @Path("/{id}")
-    public void updateReader(@PathParam("id") Long id, Reader reader) {
-        Reader existingReader = readerService.getReaderById(id);
-        reader.setId(id);
-        readerService.updateReader(reader);
-    }
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String addReader(Reader reader) {
+		logger.info("Add reader");
+		return readerServiceImpl.addReader(reader);
+	}
 
-    @DELETE
-    @Path("/{id}")
-    public void deleteReader(@PathParam("id") Long id) {
-        Reader existingReader = readerService.getReaderById(id);
-        readerService.deleteReader(id);
-    }
+	@PUT
+	@Path("/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String updateReader(@PathParam("id") Long id, Reader reader) {
+		logger.info("Update reader");
+		return readerServiceImpl.updateReader(id, reader);
+	}
+
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String deleteReader(@PathParam("id") Long id) {
+		logger.info("Delete reader");
+		return readerServiceImpl.deleteReader(id);
+	}
 }

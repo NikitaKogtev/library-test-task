@@ -7,6 +7,7 @@ import service.impl.BookService;
 import com.google.inject.Inject;
 
 public class BookServiceImpl implements BookService{
+	
     private BookDAO bookDAO;
 
     @Inject
@@ -14,41 +15,34 @@ public class BookServiceImpl implements BookService{
     	this.bookDAO = bookDAO;
     }
     
-    // Найти книгу по ID
-    public Book getBookById(Long id) {
+    @Override
+    public String getBookById(Long id) {
         return bookDAO.findById(id);
     }
 
-    // Найти все книги
+    @Override
     public String getAllBooks() {
         return bookDAO.findAll();
     }
 
-    // Добавить книгу
-    public void addBook(Book book) {
-        bookDAO.save(book);
+    @Override
+    public String addBook(Book book) {
+        return bookDAO.save(book);
     }
 
-    // Обновить книгу
-    public void updateBook(Long id, Book book) {
-    	Book existingBook = bookDAO.findById(id);
-		book.setId(id);
-        bookDAO.update(existingBook);
+    @Override
+    public String updateBook(Long id, Book book) {
+        String existingBook = bookDAO.findById(id);
+        if (existingBook != null) {
+            book.setId(id);
+            return bookDAO.update(book);
+        } else {
+            return "{\"status\":\"error\",\"message\":\"Book not found\"}";
+        }
     }
 
-    // Удалить книгу
-    public void deleteBook(Long id) {
-        bookDAO.delete(id);
+    @Override
+    public String deleteBook(Long id) {
+        return bookDAO.delete(id);
     }
-
-    // Закрыть ресурсы
-    public void close() {
-        bookDAO.close();
-    }
-
-	@Override
-	public void updateBook(Book book) {
-		// TODO Auto-generated method stub
-		
-	}
 }

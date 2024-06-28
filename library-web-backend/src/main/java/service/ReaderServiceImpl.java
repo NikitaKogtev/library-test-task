@@ -3,47 +3,45 @@ package service;
 import dao.ReaderDAO;
 import model.Reader;
 import service.impl.ReaderService;
-
-import java.util.List;
-
 import com.google.inject.Inject;
 
 public class ReaderServiceImpl implements ReaderService {
-    private ReaderDAO readerDAO;
+	
+	private ReaderDAO readerDAO;
 
-    @Inject
-    public ReaderServiceImpl(ReaderDAO readerDAO) {
-    	this.readerDAO = readerDAO;
-    }
-    
-    // Найти читателя по ID
-    public Reader getReaderById(Long id) {
-        return readerDAO.findById(id);
-    }
+	@Inject
+	public ReaderServiceImpl(ReaderDAO readerDAO) {
+		this.readerDAO = readerDAO;
+	}
 
-    // Найти всех читателей
-    public List<Reader> getAllReaders() {
-        return readerDAO.findAll();
-    }
+	@Override
+	public String getReaderById(Long id) {
+		return readerDAO.findById(id);
+	}
 
-    // Добавить читателя
-    public void addReader(Reader reader) {
-        readerDAO.save(reader);
-    }
+	@Override
+	public String getAllReaders() {
+		return readerDAO.findAll();
+	}
 
-    // Обновить читателя
-    public void updateReader(Reader reader) {
-        readerDAO.update(reader);
-    }
+	@Override
+	public String addReader(Reader reader) {
+		return readerDAO.save(reader);
+	}
 
-    // Удалить читателя
-    public void deleteReader(Long id) {
-        readerDAO.delete(id);
-    }
+	@Override
+	public String updateReader(Long id, Reader reader) {
+		String existingReader = readerDAO.findById(id);
+		if (existingReader != null) {
+			reader.setId(id);
+			return readerDAO.update(reader);
+		} else {
+			return "{\"status\":\"error\",\"message\":\"Reader not found\"}";
+		}
+	}
 
-    // Закрыть ресурсы
-    public void close() {
-        readerDAO.close();
-    }
+	@Override
+	public String deleteReader(Long id) {
+		return readerDAO.delete(id);
+	}
 }
-

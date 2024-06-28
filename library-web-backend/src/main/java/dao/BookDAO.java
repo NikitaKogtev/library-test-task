@@ -2,78 +2,113 @@ package dao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import org.codehaus.jettison.json.JSONArray;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import com.google.inject.Inject;
-
+import com.google.inject.persist.Transactional;
 import model.Book;
-
 import java.util.List;
 
 public class BookDAO {
+	private static final Logger logger = LogManager.getLogger(BookDAO.class);
+
 	private EntityManager entityManager;
 
 	@Inject
 	public BookDAO(EntityManager entityManager) {
+		logger.info("BookDAO inject");
 		this.entityManager = entityManager;
 	}
 
-	// Найти книгу по ID
-	public Book findById(Long id) {
-		return entityManager.find(Book.class, id);
+	public String findById(Long id) {
+		Book book = entityManager.find(Book.class, id);
+		JSONObject bookJSON = new JSONObject();
+		try {
+			if (book != null) {
+				bookJSON.put("id", book.getId());
+				bookJSON.put("title", book.getTitle());
+				bookJSON.put("author", book.getAuthor());
+				bookJSON.put("year", book.getPublishYear());
+			}
+		} catch (Exception ex) {
+			logger.error("BookDAO error find for id: {}", ex.getMessage());
+		}
+		logger.info("BookDAO get for id: {}", bookJSON);
+		return bookJSON.toString();
 	}
 
-	// Найти все книги
 	public String findAll() {
-    	List<Book> books = entityManager.createQuery("SELECT * FROM Book b", Book.class).getResultList();
-    	JSONArray jsonArray = new JSONArray();
-    	JSONObject jsonObject = new JSONObject();
-    	try { 
-    	for (Book book : books) {
-        	 JSONObject bookJSON = new JSONObject();
-        	 bookJSON.put("id", book.getId());
-        	 bookJSON.put("title", book.getTitle());
-        	 bookJSON.put("author", book.getAuthor());
-        	 bookJSON.put("year", book.getPublishYear());
-             jsonArray.put(bookJSON);
-             jsonObject.put("books", jsonArray);
-        }
-    	} catch (Exception ex) {
-    		ex.printStackTrace();
-    	}
-		return jsonObject.toString();
-    }
+		List<Book> books = entityManager.createQuery("SELECT b FROM Book b", Book.class).getResultList();
+		JSONArray jsonArray = new JSONArray();
+		try {
+			for (Book book : books) {
+				JSONObject bookJSON = new JSONObject();
+				bookJSON.put("id", book.getId());
+				bookJSON.put("title", book.getTitle());
+				bookJSON.put("author", book.getAuthor());
+				bookJSON.put("year", book.getPublishYear());
+				jsonArray.put(bookJSON);
+			}
+		} catch (Exception ex) {
+			logger.error("BookDAO error find all book: {}", ex.getMessage());
+		}
+		logger.info("BookDAO get all book: {}", jsonArray);
+		return jsonArray.toString();
+	}
 
-	// Сохранить книгу
-	public void save(Book book) {
+	@Transactional
+	public String save(Book book) {
 		EntityTransaction transaction = entityManager.getTransaction();
+		JSONObject response = new JSONObject();
 		try {
 			transaction.begin();
 			entityManager.persist(book);
 			transaction.commit();
+			response.put("status", "success");
 		} catch (Exception e) {
+			logger.error("BookDAO error save book: {}", e.getMessage());
 			transaction.rollback();
-			throw e;
+			try {
+				response.put("status", "error");
+				response.put("message", e.getMessage());
+			} catch (Exception jsonException) {
+				jsonException.printStackTrace();
+			}
 		}
+		logger.info("BookDAO save: {}", response.toString());
+		return response.toString();
 	}
 
-	// Обновить книгу
-	public void update(Book book) {
+	@Transactional
+	public String update(Book book) {
 		EntityTransaction transaction = entityManager.getTransaction();
+		JSONObject response = new JSONObject();
 		try {
 			transaction.begin();
 			entityManager.merge(book);
 			transaction.commit();
+			response.put("status", "success");
 		} catch (Exception e) {
+			logger.error("BookDAO error update book: {}", e.getMessage());
 			transaction.rollback();
-			throw e;
+			try {
+				response.put("status", "error");
+				response.put("message", e.getMessage());
+			} catch (Exception jsonException) {
+				jsonException.printStackTrace();
+			}
 		}
+		logger.info("BookDAO update: {}", response.toString());
+		return response.toString();
 	}
 
-	// Удалить книгу
-	public void delete(Long id) {
+	@Transactional
+	public String delete(Long id) {
 		EntityTransaction transaction = entityManager.getTransaction();
+		JSONObject response = new JSONObject();
 		try {
 			transaction.begin();
 			Book book = entityManager.find(Book.class, id);
@@ -81,14 +116,18 @@ public class BookDAO {
 				entityManager.remove(book);
 			}
 			transaction.commit();
+			response.put("status", "success");
 		} catch (Exception e) {
+			logger.error("BookDAO error delete book: {}", e.getMessage());
 			transaction.rollback();
-			throw e;
+			try {
+				response.put("status", "error");
+				response.put("message", e.getMessage());
+			} catch (Exception jsonException) {
+				jsonException.printStackTrace();
+			}
 		}
-	}
-
-	// Закрыть EntityManager
-	public void close() {
-		entityManager.close();
+		logger.info("BookDAO delete: {}", response.toString());
+		return response.toString();
 	}
 }

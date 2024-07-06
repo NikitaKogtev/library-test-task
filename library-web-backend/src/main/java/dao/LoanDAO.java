@@ -1,8 +1,6 @@
 package dao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -63,16 +61,12 @@ public class LoanDAO {
 
 	@Transactional
 	public String save(Loan loan) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			entityManager.persist(loan);
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("LoanDAO error save loan: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -85,16 +79,12 @@ public class LoanDAO {
 	}
 
 	public String update(Loan loan) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			entityManager.merge(loan);
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("LoanDAO error update loan: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -108,19 +98,15 @@ public class LoanDAO {
 
 	@Transactional
 	public String delete(Long id) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			Loan loan = entityManager.find(Loan.class, id);
 			if (loan != null) {
 				entityManager.remove(loan);
 			}
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("LoanDAO error delete loan: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -128,7 +114,7 @@ public class LoanDAO {
 				jsonException.printStackTrace();
 			}
 		}
-		logger.info("LoankDAO delete: {}", response.toString());
+		logger.info("LoanDAO delete: {}", response.toString());
 		return response.toString();
 	}
 }

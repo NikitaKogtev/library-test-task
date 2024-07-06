@@ -1,8 +1,6 @@
 package dao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -61,16 +59,12 @@ public class BookDAO {
 
 	@Transactional
 	public String save(Book book) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			entityManager.persist(book);
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("BookDAO error save book: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -84,16 +78,12 @@ public class BookDAO {
 
 	@Transactional
 	public String update(Book book) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			entityManager.merge(book);
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("BookDAO error update book: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -107,19 +97,15 @@ public class BookDAO {
 
 	@Transactional
 	public String delete(Long id) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			Book book = entityManager.find(Book.class, id);
 			if (book != null) {
 				entityManager.remove(book);
 			}
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("BookDAO error delete book: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());

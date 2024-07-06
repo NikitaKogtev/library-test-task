@@ -1,8 +1,6 @@
 package dao;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -61,16 +59,12 @@ public class ReaderDAO {
 
 	@Transactional
 	public String save(Reader reader) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			entityManager.persist(reader);
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("ReaderDAO error save reader: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -84,16 +78,12 @@ public class ReaderDAO {
 
 	@Transactional
 	public String update(Reader reader) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			entityManager.merge(reader);
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("ReaderDAO error update reader: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());
@@ -107,19 +97,15 @@ public class ReaderDAO {
 
 	@Transactional
 	public String delete(Long id) {
-		EntityTransaction transaction = entityManager.getTransaction();
 		JSONObject response = new JSONObject();
 		try {
-			transaction.begin();
 			Reader reader = entityManager.find(Reader.class, id);
 			if (reader != null) {
 				entityManager.remove(reader);
 			}
-			transaction.commit();
 			response.put("status", "success");
 		} catch (Exception e) {
 			logger.error("ReaderDAO error delete reader: {}", e.getMessage());
-			transaction.rollback();
 			try {
 				response.put("status", "error");
 				response.put("message", e.getMessage());

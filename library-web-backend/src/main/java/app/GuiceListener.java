@@ -1,24 +1,14 @@
 package app;
 
-import javax.servlet.annotation.WebListener;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.sun.jersey.guice.JerseyServletModule;
-
-import com.google.inject.persist.PersistService;
-import com.google.inject.persist.jpa.JpaPersistModule;
-
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceServletContextListener;
 import controller.BookController;
 import controller.LoanController;
 import controller.ReaderController;
-
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
-import com.sun.jersey.guice.spi.container.servlet.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import javax.servlet.annotation.WebListener;
 
 @WebListener
 public class GuiceListener extends GuiceServletContextListener {
@@ -26,30 +16,18 @@ public class GuiceListener extends GuiceServletContextListener {
 
 	@Override
 	protected Injector getInjector() {
-		logger.info("Run Injector");
-		Injector injector = Guice.createInjector(new JerseyServletModule() {
-			@Override
-			protected void configureServlets() {
-
-				bind(BookController.class);
-				bind(LoanController.class);
-				bind(ReaderController.class);
-				serve("/rest/*").with(GuiceContainer.class);
-			}
-		}, new JpaPersistModule("db_manager"));
-
+		logger.info("Initializing Guice Injector");
+		
+		Injector injector = Guice.createInjector(new AppModule(), new JerseyConfig());
+		
 		injector.getInstance(JpaInitializer.class);
-		System.out.println("End!");
+
+		injector.getInstance(BookController.class);
+		injector.getInstance(ReaderController.class);
+		injector.getInstance(LoanController.class);
+		
+		logger.info("Guice Injector initialized successfully. Injector - {}", injector);
+
 		return injector;
-	}
-}
-
-class JpaInitializer {
-	private static final Logger logger = LogManager.getLogger(JpaInitializer.class);
-
-	@Inject
-	public JpaInitializer(PersistService persistService) {
-		logger.info("Run Persost Service");
-		persistService.start();
 	}
 }

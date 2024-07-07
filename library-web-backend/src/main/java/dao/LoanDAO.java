@@ -22,22 +22,39 @@ public class LoanDAO {
 	}
 
 	public String findById(Long id) {
-		Loan loan = entityManager.find(Loan.class, id);
-		JSONObject loanJSON = new JSONObject();
-		try {
-			if (loan != null) {
-				loanJSON.put("id", loan.getId());
-				loanJSON.put("bookId", loan.getBook().getId());
-				loanJSON.put("readerId", loan.getReader().getId());
-				loanJSON.put("loanDate", loan.getLoanDate());
-				loanJSON.put("returnDate", loan.getReturnDate());
-			}
-		} catch (Exception ex) {
-			logger.error("LoanDAO error find for id: {}", ex.getMessage());
-		}
-		logger.info("BookDAO get for id: {}", loanJSON);
-		return loanJSON.toString();
-	}
+        try {
+            Loan loan = entityManager.find(Loan.class, id);
+            if (loan != null) {
+                JSONObject loanJSON = new JSONObject();
+                loanJSON.put("id", loan.getId());
+                loanJSON.put("loanDate", loan.getLoanDate().toString());
+                loanJSON.put("returnDate", loan.getReturnDate() != null ? loan.getReturnDate().toString() : null); 
+                
+                JSONObject readerJSON = new JSONObject();
+                readerJSON.put("id", loan.getReader().getId());
+                readerJSON.put("fullName", loan.getReader().getFullName());
+                readerJSON.put("gender", loan.getReader().getGender());
+                readerJSON.put("age", loan.getReader().getAge());
+                loanJSON.put("reader", readerJSON);
+
+                JSONObject bookJSON = new JSONObject();
+                bookJSON.put("id", loan.getBook().getId());
+                bookJSON.put("title", loan.getBook().getTitle());
+                bookJSON.put("author", loan.getBook().getAuthor());
+                bookJSON.put("publishYear", loan.getBook().getPublishYear());
+                loanJSON.put("book", bookJSON);
+
+                logger.info("LoanDAO find by id {}: {}", id, loanJSON);
+                return loanJSON.toString();
+            } else {
+                logger.warn("Loan with id {} not found", id);
+                return null;
+            }
+        } catch (Exception ex) {
+            logger.error("LoanDAO error find by id {}: {}", id, ex.getMessage());
+            return null;
+        }
+    }
 
 	public String findAll() {
 		List<Loan> loans = entityManager.createQuery("SELECT l FROM Loan l", Loan.class).getResultList();
@@ -46,16 +63,29 @@ public class LoanDAO {
 			for (Loan loan : loans) {
 				JSONObject loanJSON = new JSONObject();
 				loanJSON.put("id", loan.getId());
-				loanJSON.put("bookId", loan.getBook().getId());
-				loanJSON.put("readerId", loan.getReader().getId());
-				loanJSON.put("loanDate", loan.getLoanDate());
-				loanJSON.put("returnDate", loan.getReturnDate());
+				loanJSON.put("loanDate", loan.getLoanDate().toString());
+				loanJSON.put("returnDate", loan.getReturnDate() != null ? loan.getReturnDate().toString() : null);
+
+				JSONObject readerJSON = new JSONObject();
+				readerJSON.put("id", loan.getReader().getId());
+				readerJSON.put("fullName", loan.getReader().getFullName());
+				readerJSON.put("gender", loan.getReader().getGender());
+				readerJSON.put("age", loan.getReader().getAge());
+				loanJSON.put("reader", readerJSON);
+
+				JSONObject bookJSON = new JSONObject();
+				bookJSON.put("id", loan.getBook().getId());
+				bookJSON.put("title", loan.getBook().getTitle());
+				bookJSON.put("author", loan.getBook().getAuthor());
+				bookJSON.put("publishYear", loan.getBook().getPublishYear());
+				loanJSON.put("book", bookJSON);
+
 				jsonArray.put(loanJSON);
+				logger.info("LoanDAO get all book: {}", jsonArray);
 			}
 		} catch (Exception ex) {
 			logger.error("LoanDAO error find all book: {}", ex.getMessage());
 		}
-		logger.info("LoanDAO get all book: {}", jsonArray);
 		return jsonArray.toString();
 	}
 

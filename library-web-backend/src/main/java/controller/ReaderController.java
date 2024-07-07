@@ -9,6 +9,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 @Path("/readers")
 public class ReaderController {
@@ -40,8 +42,13 @@ public class ReaderController {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String addReader(Reader reader) {
+	public String addReader(JSONObject jsonObject) throws JSONException {
 		logger.info("Add reader");
+		Reader reader = new Reader();
+		reader.setId(jsonObject.getLong("id"));
+		reader.setFullName(jsonObject.getString("full_name"));
+		reader.setGender(jsonObject.getString("gender"));
+		reader.setAge(jsonObject.getInt("age"));
 		return readerServiceImpl.addReader(reader);
 	}
 
@@ -49,8 +56,13 @@ public class ReaderController {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String updateReader(@PathParam("id") Long id, Reader reader) {
+	public String updateReader(@PathParam("id") Long id, JSONObject jsonObject) throws JSONException {
 		logger.info("Update reader");
+		Reader reader = new Reader();
+		reader.setId(id);
+		reader.setFullName(jsonObject.getString("full_name"));
+		reader.setGender(jsonObject.getString("gender"));
+		reader.setAge(jsonObject.getInt("age"));
 		return readerServiceImpl.updateReader(id, reader);
 	}
 

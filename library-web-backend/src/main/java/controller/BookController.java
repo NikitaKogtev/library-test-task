@@ -45,7 +45,7 @@ public class BookController {
 		Book book = new Book();
 		book.setTitle(jsonObject.getString("title"));
 		book.setAuthor(jsonObject.getString("author"));
-        book.setPublishYear(Integer.parseInt(jsonObject.getString("year")));
+		book.setPublishYear(Integer.parseInt(jsonObject.getString("year")));
 		return bookServiceImpl.addBook(book);
 	}
 
@@ -53,15 +53,15 @@ public class BookController {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	 public String updateBook(@PathParam("id") Long id, JSONObject jsonObject) throws JSONException {
-        logger.info("Update book with id {}: {}", id, jsonObject);
-        Book book = new Book();
-        book.setId(id); // Assuming setId exists in Book class
-        book.setTitle(jsonObject.getString("title"));
-        book.setAuthor(jsonObject.getString("author"));
-        book.setPublishYear(jsonObject.getInt("year"));
-        return bookServiceImpl.updateBook(id, book);
-    }
+	public String updateBook(@PathParam("id") Long id, JSONObject jsonObject) throws JSONException {
+		logger.info("Update book with id {}: {}", id, jsonObject);
+		Book book = new Book();
+		book.setId(id);
+		book.setTitle(jsonObject.getString("title"));
+		book.setAuthor(jsonObject.getString("author"));
+		book.setPublishYear(jsonObject.getInt("year"));
+		return bookServiceImpl.updateBook(id, book);
+	}
 
 	@DELETE
 	@Path("/{id}")
